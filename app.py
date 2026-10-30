@@ -101,7 +101,7 @@ st.subheader("🏆 네이버 스마트플레이스 순위")
 st.caption("모바일 통합검색 기준 순위입니다.")
 
 with st.spinner("플레이스 노출 순위를 추적하는 중..."):
-    for kw in ["가산 맛집", "가산 점심", "가산동 곰탕"]:
+    for kw in ["가산디지털단지맛집", "가산디지털단지역맛집"]:
         rank = get_place_ranking(kw, STORE_NAME)
         
         if rank > 0:

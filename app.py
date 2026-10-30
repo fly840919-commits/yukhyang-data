@@ -49,20 +49,26 @@ def get_place_ranking(keyword, store_name):
         "User-Agent": "Mozilla/5.0 (Linux; Android 13; SM-S918N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
     }
     encoded_keyword = urllib.parse.quote(keyword)
-    url = f"https://m.map.naver.com/search2/search.naver?query={encoded_keyword}"
     
-    try:
-        res = requests.get(url, headers=headers, timeout=5)
-        soup = BeautifulSoup(res.text, 'html.parser')
-        
-        # 모바일 지도 검색 결과 파싱
-        items = soup.select('li._item .item_title .name')
-        for idx, item in enumerate(items, 1):
-            if store_name in item.text:
-                return idx
-        return 0 # 리스트에 없을 경우
-    except Exception as e:
-        return -1 # 통신 에러
+    total_rank = 0
+    for page in range(1, 6): 
+        url = f"https://m.map.naver.com/search2/search.naver?query={encoded_keyword}&page={page}"
+        try:
+            res = requests.get(url, headers=headers, timeout=5)
+            soup = BeautifulSoup(res.text, 'html.parser')
+            
+            items = soup.select('li._item .item_title .name')
+            if not items:
+                break
+            
+            for item in items:
+                total_rank += 1
+                if store_name in item.text:
+                    return total_rank 
+        except Exception:
+            pass
+            
+    return 0
 
 # --- 3. 모바일 앱 화면(UI) 구성 ---
 st.set_page_config(page_title="육향 대시보드", page_icon="📈", layout="centered")
